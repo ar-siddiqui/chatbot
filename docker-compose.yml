@@ -3,7 +3,7 @@ version: '3.8'
 services:
   milvus:
     image: milvusdb/milvus:v2.3.4
-    container_name: askwise-milvus
+    container_name: chatbot-milvus
     security_opt:
       - seccomp:unconfined
     env_file:
@@ -14,7 +14,7 @@ services:
       - '19530:19530'
       - '9091:9091'
     networks:
-      - askwise_net
+      - chatbot_net
     healthcheck:
       test: ['CMD', 'curl', '-f', 'http://localhost:9091/healthz']
       interval: 30s
@@ -24,7 +24,7 @@ services:
     command: ['milvus', 'run', 'standalone']
 
   postgres:
-    container_name: askwise-postgres
+    container_name: chatbot-postgres
     image: postgres:16.1-alpine3.18
     env_file:
       - .env
@@ -39,7 +39,7 @@ services:
       - ./.data/postgres:/var/lib/postgresql/data
 
   # api:
-  #   container_name: askwise-api
+  #   container_name: chatbot-api
   #   build:
   #     context: ./api
   #     target: dev
@@ -57,5 +57,5 @@ services:
   #       condition: service_healthy
 
 networks:
-  askwise_net:
+  chatbot_net:
     external: true

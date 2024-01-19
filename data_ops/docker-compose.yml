@@ -2,17 +2,17 @@ version: '3.8'
 
 services:
   data-ops:
-    container_name: askwise-data-ops
+    container_name: chatbot-data-ops
     build:
       context: .
-    image: askwise-data-ops
+    image: chatbot-data-ops
     env_file:
       - ../.env
     volumes:
       - ./:/src
     networks:
-      - askwise_net
+      - chatbot_net
 
 networks:
-  askwise_net:
+  chatbot_net:
     external: true
