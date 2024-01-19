@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  milvus:
+    image: milvusdb/milvus:v2.3.4
+    container_name: askwise-milvus
+    security_opt:
+      - seccomp:unconfined
+    env_file:
+      - .env
+    volumes:
+      - ./.data/milvus:/var/lib/milvus
+    ports:
+      - '19530:19530'
+      - '9091:9091'
+    networks:
+      - askwise_net
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9091/healthz']
+      interval: 30s
+      timeout: 20s
+      retries: 3
+      start_period: 90s
+    command: ['milvus', 'run', 'standalone']
+
+  postgres:
+    container_name: askwise-postgres
+    image: postgres:16.1-alpine3.18
+    env_file:
+      - .env
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./.data/postgres:/var/lib/postgresql/data
+
+  # api:
+  #   container_name: askwise-api
+  #   build:
+  #     context: ./api
+  #     target: dev
+  #   ports:
+  #     - '5000:500'
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ./api:/app
+  #     - ./.data/api:/.data
+  #   depends_on:
+  #     milvus:
+  #       condition: service_healthy
+  #     postgres:
+  #       condition: service_healthy
+
+networks:
+  askwise_net:
+    external: true

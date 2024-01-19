@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  data-ops:
+    container_name: askwise-data-ops
+    build:
+      context: .
+    image: askwise-data-ops
+    env_file:
+      - ../.env
+    volumes:
+      - ./:/src
+    networks:
+      - askwise_net
+
+networks:
+  askwise_net:
+    external: true
